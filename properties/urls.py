@@ -1,6 +1,9 @@
-from django.urls import path
-from .views import property_list
+from django.core.cache import cache
+from .models import Property
 
-urlpatterns = [
-        path('', property_list, name='property_list'),
-    ]
+def get_all_properties():
+        properties = cache.get('all_properties')
+        if properties is None:
+            properties = Property.objects.all()
+            cache.set('all_properties', properties, 3600)  # Cache for 1 hour
+        return properties
