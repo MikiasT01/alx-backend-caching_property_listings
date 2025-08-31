@@ -1,11 +1,9 @@
-from django.views.decorators.cache import cache_page
-from django.http import JsonResponse
+from django.core.cache import cache
 from .models import Property
-from .utils import get_all_properties
 
-@cache_page(60 * 15)  # Cache for 15 minutes (from Task 1)
-def property_list(request):
-        properties = get_all_properties().values('id', 'title', 'price', 'location')
-        return JsonResponse({
-            'data': list(properties)
-        })
+def getallproperties():
+        properties = cache.get('allproperties')
+        if properties is None:
+            properties = Property.objects.all()
+            cache.set('allproperties', properties, 3600)  # Cache for 1 hour
+        return properties
