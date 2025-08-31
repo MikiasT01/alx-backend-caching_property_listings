@@ -1,16 +1,16 @@
 from django.core.cache import cache
-    from .models import Property
-    import logging
-    from django_redis import get_redis_connection
+from .models import Property
+import logging
+from django_redis import get_redis_connection
 
-    def get_all_properties():
+def get_all_properties():
         properties = cache.get('all_properties')
         if properties is None:
             properties = Property.objects.all()
             cache.set('all_properties', properties, 3600)  # Cache for 1 hour
         return properties
 
-    def get_redis_cache_metrics():
+def get_redis_cache_metrics():
         logger = logging.getLogger(__name__)
         try:
             # Connect to Redis using django_redis
